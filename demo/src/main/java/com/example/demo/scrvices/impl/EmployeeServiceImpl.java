@@ -30,10 +30,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     }
 
     @Override
-    public EmployeeDto getEmployeeByID(Long employeeID) {
+    public EmployeeDto getEmployeeByID(Long employeeId) {
 
-        Employee employee = employeeRepository.findById(employeeID)
-                .orElseThrow(()-> new ResoureceNotFoundException("Employee is not exist with given id"+ employeeID));
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(()-> new ResoureceNotFoundException("Employee is not exist with given id"+ employeeId));
         return mapToEmployeeDto(employee);
     }
 
@@ -41,5 +41,20 @@ public class EmployeeServiceImpl implements EmployeeService {
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
         return employees.stream().map((employee) -> EmployeeMapper.mapToEmployeeDto(employee) ).collect(Collectors.toList());
+    }
+
+    @Override
+    public EmployeeDto updateEmployee(Long employeeId, EmployeeDto updateEmployee) {
+
+        Employee employee = employeeRepository.findById(employeeId).orElseThrow(
+                () -> new ResoureceNotFoundException("Employee is not exist with given id:"+ employeeId)
+    );
+
+        employee.setFirstname(updateEmployee.getFirstName());
+        employee.setLastname(updateEmployee.getLastName());
+        employee.setEmail(updateEmployee.getEmail());
+
+        Employee updatedEmployeeObj = employeeRepository.save(employee);
+        return EmployeeMapper.mapToEmployeeDto(updatedEmployeeObj);
     }
 }
